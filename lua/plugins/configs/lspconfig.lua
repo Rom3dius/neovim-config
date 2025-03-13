@@ -18,9 +18,9 @@ local formatting_servers = {
     dockerls = {},
     bashls = {},
     gopls = {},
-    ruff_lsp = {},
     vimls = {},
-    yamlls = {}
+    yamlls = {},
+    based_pyright = {}
 }
 
 -- Merge
