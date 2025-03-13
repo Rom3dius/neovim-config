@@ -91,7 +91,7 @@ mv ~/.config/nvim ~/.config/nvim.bak
 <details><summary> Linux and Mac </summary>
 
 ```shell
-git clone https://github.com/ntk148v/neovim-config.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
+git clone https://github.com/Rom3dius/neovim-config.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
 ```
 
 </details>
@@ -101,7 +101,7 @@ git clone https://github.com/ntk148v/neovim-config.git "${XDG_CONFIG_HOME:-$HOME
 If you're using `cmd.exe`:
 
 ```shell
-git clone https://github.com/ntk148v/neovim-config.git "%localappdata%\nvim"
+git clone https://github.com/Rom3dius/neovim-config.git "%localappdata%\nvim"
 ```
 
 If you're using `powershell.exe`
