@@ -2,15 +2,19 @@ local M = {}
 
 M.plugins = {
   { "gelguy/wilder.nvim" },
+  {'akinsho/toggleterm.nvim', version = "*", config = true},
 }
 
 M.configs = function()
   local map = vim.keymap.set
-  map("n", "L", "$") -- skip to line end
-  map("n", "H", "0") -- skip to line start
-  map({'n' , 't'}, '<C-H>', '<C-W>h', { noremap = true, silent = true }) -- swap windows
-  map({'n' , 't'}, '<C-L>', '<C-W>l', { noremap = true, silent = true }) -- swap windows
-
+  map({'n', 'v'}, "L", "$", { desc = "Skip to line end" }) -- skip to line end
+  map({'n', 'v'}, "H", "0", { desc = "Skip to line start" }) -- skip to line start
+  map('n', '<leader>gd', vim.lsp.buf.definition, { desc = "LSP Jump to definition" }) -- get definition
+  map('n', '<leader>gs', vim.lsp.buf.signature_help, { desc = "LSP Get signature" }) -- get signature
+  map('n', '<leader>gh', vim.lsp.buf.hover, { desc = "LSP Get hover information" })
+  map('n', '<leader>gr', vim.lsp.buf.references, { desc = "LSP Get references" })
+  map('n', '<leader>gi', vim.lsp.buf.implementation, { desc = "LSP Get implementations" })
+  map('n', '<leader>go', vim.lsp.buf.type_definition, { desc = "LSP Jump to type definition" })
   -- setup wilder
   local wilder = require('wilder')
   wilder.setup({modes = {':', '/', '?'}})
