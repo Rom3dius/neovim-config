@@ -1,5 +1,14 @@
 local M = {}
 
+-- This is custom.lua! This nvim installation is based on ntk148v/neovim-config
+-- These are the changes Romedius made.
+-- Not all plugins and keybinds are listed here, checkout mappings.lua and plugins/init.lua
+--
+--
+--
+--
+--
+
 M.plugins = {
   { "goolord/alpha-nvim" },
   { "gelguy/wilder.nvim" },
@@ -18,8 +27,7 @@ M.configs = function()
   unmap("n", "<leader>cm")
 
   -- quit out
-  map("n", "<leader>qw", ":q<CR>", { desc = "Close window" })
-  map("n", "<leader>qq", ":qa!<CR>", { desc = "Close nvim" })
+  map("n", "<leader>q", ":qa!<CR>", { desc = "Close nvim" })
 
   -- normal navigation
   map({'n', 'v'}, "L", "$", { desc = "Skip to line end" }) -- skip to line end
@@ -36,8 +44,17 @@ M.configs = function()
   map('t', '<C-L>', '<C-\\><C-n><C-w>l', { desc = "switch window right" })
   map('t', '<Esc>', '<C-\\><C-n>', { desc = "Exit terminal mode" })
 
+  -- manage windows
+  map('n', '<leader>wv', ':vsplit<CR>', { desc = "Split window vertically "})
+  map('n', '<leader>wq', ':q<CR>', { desc = "Close window" })
+  map('n', '<leader>wh', ':vertical resize +12<CR>', { desc = "Increase window size left" })
+  map('n', '<leader>wl', ':vertical resize -12<CR>', { desc = "Increase window size right" })
+  map('n', '<leader>wk', ':resize +12<CR>', { desc = "Increase window size up" })
+  map('n', '<leader>wj', ':resize -12<CR>', { desc = "Increase window size down" })
+
   -- manage terminals
-  map('n', '<leader>tt', '<Cmd>ToggleTerm<CR>', { desc = "Toggle terminal" })
+  map('n', '<leader>th', '<Cmd>ToggleTerm direction=horizontal<CR>', { desc = "Open terminal horizontally" })
+  map('n', '<leader>tv', '<Cmd>ToggleTerm direction=vertical<CR>', { desc = "Open terminal vertically" })
   map('n', '<leader>t1', '<Cmd>ToggleTerm 1<CR>', { desc = "Open terminal 1" })
   map('n', '<leader>t2', '<Cmd>ToggleTerm 2<CR>', { desc = "Open terminal 2" })
   map('n', '<leader>t3', '<Cmd>ToggleTerm 3<CR>', { desc = "Open terminal 3" })
@@ -57,10 +74,10 @@ M.configs = function()
   map('n', '<leader>qb', ':bd<CR>', { desc = "Close current buffer" })
 
   -- pull up which-key
-  map('n', '<leader>w', ':WhichKey<CR>', { desc = "Open WhichKey to see keybindings" })
+  map('n', '<leader>h', ':WhichKey<CR>', { desc = "Open WhichKey to see keybindings" })
 
   -- pull up alpha
-  map('n', '<leader>a', ':Alpha<CR>', { silent = true, desc = "Opens the Alpha dashboard" })
+  map('n', '<leader>a', ':Alpha<CR><CR>', { silent = true, desc = "Opens the Alpha dashboard" })
 
   -- setup wilder
   local wilder = require('wilder')
@@ -105,11 +122,17 @@ M.configs = function()
   }
   dashboard.section.buttons.val = {
       dashboard.button( "e", "  New file" , ":ene <BAR> startinsert <CR>"),
-      dashboard.button( "f", "  Find File", telescope_f.find_files),
-      dashboard.button( "g", "󰦨  Find text", telescope_f.live_grep),
-      dashboard.button( "w", "  Show keybindings", ":WhichKey<CR>"),
-      dashboard.button( "q", "  Quit NVIM" , ":qa<CR>"),
+      dashboard.button( "f", "  Find File", ":Telescope find_files<CR>"),
+      dashboard.button( "g", "󰦨  Find text", ":Telescope live_grep<CR>"),
+      dashboard.button( "h", "  Show keybindings", ":WhichKey<CR>"),
+      dashboard.button( "s", "  Configure NVIM", ":cd ~/.config/nvim | :edit lua/custom.lua<CR><CR>"),
   }
+  if vim.fn.isdirectory("~/.config/hypr") then
+    local hypr_button = dashboard.button("d", "󰍹  Configure Hyprland", ":cd ~/.config/hypr | :edit ~/.config/hypr/UserConfigs/UserKeybinds.conf<CR><CR>")
+    table.insert(dashboard.section.buttons.val, hypr_button)
+  end
+  local quit_button = dashboard.button( "q", "  Quit NVIM" , ":qa<CR>")
+  table.insert(dashboard.section.buttons.val, quit_button)
   local handle = io.popen('fortune')
   local fortune = handle:read("*a")
   handle:close()
@@ -121,29 +144,16 @@ M.configs = function()
   -- reconfigure telescope
   require("telescope").setup {
     defaults = {
-      file_ignore_patterns = {},  -- Remove ignored patterns
-      vimgrep_arguments = {
-        "rg",
-        "--color=never",
-        "--no-heading",
-        "--with-filename",
-        "--line-number",
-        "--column",
-        "--smart-case",
-        "--hidden",      -- Search inside hidden files
-        "--no-ignore"    -- Search inside ignored files
+      mappings = {
+        n = {
+          ['<C-d>'] = require('telescope.actions').delete_buffer
+        },
+        i = {
+          ["<C-d>"] = require('telescope.actions').delete_buffer
+        }
       }
-    },
-    pickers = {
-      find_files = {
-        find_command = { "fd", "--type", "f", "--hidden", "--no-ignore", "--follow" }
-      },
-      live_grep = {
-        additional_args = function() return { "--hidden", "--no-ignore" } end
-      }
-    },
+    }
   }
-
 
   -- reconfigure nvimtree to find hidden files
   require("nvim-tree").setup {
@@ -154,9 +164,19 @@ M.configs = function()
       dotfiles = false
     }
   }
+
 end
 
 M.formatting_servers = {
+  basedpyright = {
+    settings = {
+      basedpyright = {
+        typeCheckingMode = "standard",
+        venvPath = ".",
+        venv = ".venv",
+      }
+    }
+  }
 }
 return M
 
