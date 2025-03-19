@@ -114,12 +114,11 @@ M.configs = function()
     [[ ⠀⠀⠀⠙⢿⣷⣬⡛⢦⣄⡀⠀⠹⣄⣸⣇⣠⠏⠀⢀⣠⡴⢛⣵⣾⡿⠃⠀⠀⠀ ]],
     [[ ⠀⠀⠀⠀⠀⠉⠻⣿⣶⣬⣉⣛⠲⠿⠿⠿⠿⠖⣛⣩⣥⣾⣿⠟⠉⠀⠀⠀⠀⠀ ]],
     [[ ⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠻⠿⠿⣿⣿⣿⣿⠿⠿⠟⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀ ]],
-    [[                                ]],
-    [[  I have found through painful  ]],
-    [[  experience, that the most     ]],
-    [[  important step a person can   ]],
-    [[  take is the next one.         ]],
   }
+  local quotes = require("quotes")
+  local random_quote = quotes.get_random_quote()
+  local formatted_quote = quotes.format_quote_within_bounds(random_quote, 32)
+  dashboard.section.header.val = vim.list_extend(dashboard.section.header.val, formatted_quote)
   dashboard.section.buttons.val = {
       dashboard.button( "e", "  New file" , ":ene <BAR> startinsert <CR>"),
       dashboard.button( "f", "  Find File", ":Telescope find_files<CR>"),
