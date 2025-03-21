@@ -13,13 +13,26 @@ M.plugins = {
   { "goolord/alpha-nvim" },
   { "gelguy/wilder.nvim" },
   { 'akinsho/toggleterm.nvim', version = "*", config = true },
-  { 'arturgoms/moonbow.nvim' },
   { 'EdenEast/nightfox.nvim' },
+  {
+    "Aaronik/GPTModels.nvim",
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "nvim-telescope/telescope.nvim"
+    }
+  },
+  { "pocco81/auto-save.nvim" },
+  { "SalOrak/whaler.nvim" },
 }
 
 M.configs = function()
   local map = vim.keymap.set
   local unmap = vim.keymap.del
+
+  -- unmap spacebar so it behaves properly as leader
+  vim.api.nvim_set_keymap("", "<Space>", "<Nop>", { noremap = true, silent = true })
+  vim.g.mapleader = " "
+
   -- unmap keybinds I don't like from mappings.lua
   unmap("n", "<leader>q")
   unmap("n", "<leader>wh")
@@ -72,13 +85,19 @@ M.configs = function()
   map('n', '<leader>ge', vim.diagnostic.open_float, { desc = "LSP Open diagnostics float ", noremap = true, silent = true })
   map('n', '<leader>ga', vim.diagnostic.setqflist, { desc = "LSP Show all errors in codebase"})
 
+  -- AI shortcuts
+  map('v', '<leader>a', ':GPTModelsCode<CR>', { desc = "GPT models code", noremap = true })
+  map('n', '<leader>a', ':GPTModelsCode<CR>', { desc = "GPT models code", noremap = true })
+  map('v', '<leader>c', ':GPTModelsChat<CR>', { desc = "GPT models chat", noremap = true })
+  map('n', '<leader>c', ':GPTModelsChat<CR>', { desc = "GPT models chat", noremap = true })
+
   -- pull up which-key
   map('n', '<leader>h', ':WhichKey<CR>', { desc = "Open WhichKey to see keybindings" })
 
   -- pull up alpha
-  map('n', '<leader>a', ':Alpha<CR><CR>', { silent = true, desc = "Opens the Alpha dashboard" })
+  map('n', '<leader>d', ':Alpha<CR><CR>', { silent = true, desc = "Opens the Alpha dashboard" })
 
-  -- enable nightfox
+  -- enable Nightfox
   vim.cmd("colorscheme nightfox")
 
   -- setup lualine to use nightfox
@@ -150,20 +169,32 @@ M.configs = function()
   alpha.setup(dashboard.config)
 
   -- reconfigure telescope
-  require("telescope").setup {
+  local telescope = require('telescope')
+  local telescope_actions = require('telescope.actions')
+  telescope.setup {
     defaults = {
       mappings = {
         n = {
-          ['<C-d>'] = require('telescope.actions').delete_buffer
+          ['<C-d>'] = telescope_actions.close
         },
         i = {
-          ["<C-d>"] = require('telescope.actions').delete_buffer
+          ["<C-d>"] = telescope_actions.close
         }
+      }
+    },
+    extensions = {
+      whaler = {
+        directories = { "~/src", "~/dev" },
+        oneoff_directories = { "~/.config/nvim", "~/.config/hypr" },
       }
     }
   }
+  telescope.load_extension("whaler")
 
-  -- reconfigure nvimtree to find hidden files
+  -- whaler shortcuts
+  map('n', '<leader>fw', telescope.extensions.whaler.whaler, { desc = "Search for a project" })
+
+  -- reconfigure nvimtree to find hidden files by default
   require("nvim-tree").setup {
     git = {
       ignore = false
@@ -187,4 +218,5 @@ M.formatting_servers = {
   }
 }
 return M
+
 
