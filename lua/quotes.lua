@@ -68,6 +68,10 @@ M.quotes = {
         "This is how civilizations decline. They quit taking risks. And when they quit taking risks, arteries harden. Every year there are more referees and fewer doers. When you’ve had success for too long, you lose the desire to take risks.",
         "- Elon Musk"
     },
+    {
+        "Failure is an option here. If things are not failing, you are not innovating enough.",
+        "- Elon Musk"
+    }
 }
 
 -- Function to wrap text within a width limit

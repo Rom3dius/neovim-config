@@ -12,7 +12,9 @@ local M = {}
 M.plugins = {
   { "goolord/alpha-nvim" },
   { "gelguy/wilder.nvim" },
-  {'akinsho/toggleterm.nvim', version = "*", config = true},
+  { 'akinsho/toggleterm.nvim', version = "*", config = true },
+  { 'arturgoms/moonbow.nvim' },
+  { 'EdenEast/nightfox.nvim' },
 }
 
 M.configs = function()
@@ -67,17 +69,24 @@ M.configs = function()
   map('n', '<leader>gr', vim.lsp.buf.references, { desc = "LSP Get references" })
   map('n', '<leader>gi', vim.lsp.buf.implementation, { desc = "LSP Get implementations" })
   map('n', '<leader>go', vim.lsp.buf.type_definition, { desc = "LSP Jump to type definition" })
-
-  -- buffer navigation
-  map('n', '<Tab>', ':bnext<CR>', { desc = "Go to next buffer" })
-  map('n', '<S-Tab>', ':bprevious<CR>', { desc = "Go to previous buffer" })
-  map('n', '<leader>qb', ':bd<CR>', { desc = "Close current buffer" })
+  map('n', '<leader>ge', vim.diagnostic.open_float, { desc = "LSP Open diagnostics float ", noremap = true, silent = true })
+  map('n', '<leader>ga', vim.diagnostic.setqflist, { desc = "LSP Show all errors in codebase"})
 
   -- pull up which-key
   map('n', '<leader>h', ':WhichKey<CR>', { desc = "Open WhichKey to see keybindings" })
 
   -- pull up alpha
   map('n', '<leader>a', ':Alpha<CR><CR>', { silent = true, desc = "Opens the Alpha dashboard" })
+
+  -- enable nightfox
+  vim.cmd("colorscheme nightfox")
+
+  -- setup lualine to use nightfox
+  require('lualine').setup({
+    options = {
+      theme = 'nightfox',
+    },
+  })
 
   -- setup wilder
   local wilder = require('wilder')
