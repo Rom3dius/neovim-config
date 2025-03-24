@@ -184,6 +184,7 @@ M.configs = function()
     },
     extensions = {
       whaler = {
+        file_explorer = "nvimtree",
         directories = { "~/src", "~/dev" },
         oneoff_directories = { "~/.config/nvim", "~/.config/hypr" },
       }
