@@ -151,6 +151,7 @@ M.configs = function()
       dashboard.button( "e", "  New file" , ":ene <BAR> startinsert <CR>"),
       dashboard.button( "f", "  Find File", ":Telescope find_files<CR>"),
       dashboard.button( "g", "󰦨  Find text", ":Telescope live_grep<CR>"),
+      dashboard.button( "p", "  Find Project", ":Telescope whaler<CR>"),
       dashboard.button( "h", "  Show keybindings", ":WhichKey<CR>"),
       dashboard.button( "s", "  Configure NVIM", ":cd ~/.config/nvim | :edit lua/custom.lua<CR><CR>"),
   }
@@ -205,6 +206,9 @@ M.configs = function()
     }
   }
 
+  -- configure special lsp garbage
+
+
 end
 
 M.formatting_servers = {
@@ -216,6 +220,11 @@ M.formatting_servers = {
         venv = ".venv",
       }
     }
+  },
+  omnisharp = {
+    root_dir = function ()
+      return vim.loop.cwd()
+    end,
   }
 }
 return M
