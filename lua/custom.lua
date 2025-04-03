@@ -12,17 +12,41 @@ local M = {}
 M.plugins = {
   { "goolord/alpha-nvim" },
   { "gelguy/wilder.nvim" },
-  { 'akinsho/toggleterm.nvim', version = "*", config = true },
   { 'EdenEast/nightfox.nvim' },
-  {
-    "Aaronik/GPTModels.nvim",
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "nvim-telescope/telescope.nvim"
-    }
-  },
   { "pocco81/auto-save.nvim" },
   { "SalOrak/whaler.nvim" },
+  { 'akinsho/toggleterm.nvim', version = "*", config = true },
+  {
+    "yetone/avante.nvim",
+    event = "VeryLazy",
+    version = false,
+    opts = {
+      provider = "ollama",
+      ollama = {
+        model = "mistral-nemo:latest",
+        max_tokens = 128000
+      }
+    },
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "stevearc/dressing.nvim",
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "nvim-telescope/telescope.nvim",
+      "hrsh7th/nvim-cmp"
+    }
+  },
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    opts = {
+      file_types = { "markdown", "Avante" },
+    },
+    ft = { "markdown", "Avante" },
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons"
+    }
+  }
 }
 
 M.configs = function()
@@ -45,8 +69,8 @@ M.configs = function()
   map("n", "<leader>q", ":qa!<CR>", { desc = "Close nvim" })
 
   -- normal navigation
-  map({'n', 'v'}, "L", "$", { desc = "Skip to line end" }) -- skip to line end
-  map({'n', 'v'}, "H", "0", { desc = "Skip to line start" }) -- skip to line start
+  map({ 'n', 'v' }, "L", "$", { desc = "Skip to line end" })   -- skip to line end
+  map({ 'n', 'v' }, "H", "0", { desc = "Skip to line start" }) -- skip to line start
   map('n', '<C-H>', "<C-w>h", { desc = "switch window left" })
   map('n', '<C-J>', "<C-w>j", { desc = "switch window right" })
   map('n', '<C-K>', "<C-w>k", { desc = "switch window up" })
@@ -60,7 +84,7 @@ M.configs = function()
   map('t', '<Esc>', '<C-\\><C-n>', { desc = "Exit terminal mode" })
 
   -- manage windows
-  map('n', '<leader>wv', ':vsplit<CR>', { desc = "Split window vertically "})
+  map('n', '<leader>wv', ':vsplit<CR>', { desc = "Split window vertically " })
   map('n', '<leader>wq', ':q<CR>', { desc = "Close window" })
   map('n', '<leader>wh', ':vertical resize +12<CR>', { desc = "Increase window size left" })
   map('n', '<leader>wl', ':vertical resize -12<CR>', { desc = "Increase window size right" })
@@ -77,19 +101,14 @@ M.configs = function()
 
   -- LSP shortcuts
   map('n', '<leader>gd', vim.lsp.buf.definition, { desc = "LSP Jump to definition" }) -- get definition
-  map('n', '<leader>gs', vim.lsp.buf.signature_help, { desc = "LSP Get signature" }) -- get signature
+  map('n', '<leader>gs', vim.lsp.buf.signature_help, { desc = "LSP Get signature" })  -- get signature
   map('n', '<leader>gh', vim.lsp.buf.hover, { desc = "LSP Get hover information" })
   map('n', '<leader>gr', vim.lsp.buf.references, { desc = "LSP Get references" })
   map('n', '<leader>gi', vim.lsp.buf.implementation, { desc = "LSP Get implementations" })
   map('n', '<leader>go', vim.lsp.buf.type_definition, { desc = "LSP Jump to type definition" })
-  map('n', '<leader>ge', vim.diagnostic.open_float, { desc = "LSP Open diagnostics float ", noremap = true, silent = true })
-  map('n', '<leader>ga', vim.diagnostic.setqflist, { desc = "LSP Show all errors in codebase"})
-
-  -- AI shortcuts
-  map('v', '<leader>a', ':GPTModelsCode<CR>', { desc = "GPT models code", noremap = true })
-  map('n', '<leader>a', ':GPTModelsCode<CR>', { desc = "GPT models code", noremap = true })
-  map('v', '<leader>c', ':GPTModelsChat<CR>', { desc = "GPT models chat", noremap = true })
-  map('n', '<leader>c', ':GPTModelsChat<CR>', { desc = "GPT models chat", noremap = true })
+  map('n', '<leader>ge', vim.diagnostic.open_float,
+    { desc = "LSP Open diagnostics float ", noremap = true, silent = true })
+  map('n', '<leader>ga', vim.diagnostic.setqflist, { desc = "LSP Show all errors in codebase" })
 
   -- pull up which-key
   map('n', '<leader>h', ':WhichKey<CR>', { desc = "Open WhichKey to see keybindings" })
@@ -109,7 +128,7 @@ M.configs = function()
 
   -- setup wilder
   local wilder = require('wilder')
-  wilder.setup({modes = {':', '/', '?'}})
+  wilder.setup({ modes = { ':', '/', '?' } })
   wilder.set_option('renderer', wilder.popupmenu_renderer(
     wilder.popupmenu_palette_theme({
       -- 'single', 'double', 'rounded' or 'solid'
@@ -124,8 +143,8 @@ M.configs = function()
 
   -- setup alpha (greeting screen)
   local telescope_f = require("telescope.builtin")
-  local alpha = require'alpha'
-  local dashboard = require'alpha.themes.dashboard'
+  local alpha = require 'alpha'
+  local dashboard = require 'alpha.themes.dashboard'
   dashboard.section.header.val = {
     [[     ⠀⠀⠀ ⣀⣤⣴⣶⣾⣿⣿⣿⣿⣷⣶⣦⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀ ]],
     [[ ⠀⠀⠀⠀⠀⣠⣴⣿⠿⢛⣩⣥⣶⠶⠶⠶⠶⣶⣬⣍⡛⠿⣿⣦⣄⠀⠀⠀⠀⠀ ]],
@@ -148,25 +167,26 @@ M.configs = function()
   local formatted_quote = quotes.format_quote_within_bounds(random_quote, 32)
   dashboard.section.header.val = vim.list_extend(dashboard.section.header.val, formatted_quote)
   dashboard.section.buttons.val = {
-      dashboard.button( "e", "  New file" , ":ene <BAR> startinsert <CR>"),
-      dashboard.button( "f", "  Find File", ":Telescope find_files<CR>"),
-      dashboard.button( "g", "󰦨  Find text", ":Telescope live_grep<CR>"),
-      dashboard.button( "p", "  Find Project", ":Telescope whaler<CR>"),
-      dashboard.button( "h", "  Show keybindings", ":WhichKey<CR>"),
-      dashboard.button( "s", "  Configure NVIM", ":cd ~/.config/nvim | :edit lua/custom.lua<CR><CR>"),
+    dashboard.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
+    dashboard.button("f", "  Find File", ":Telescope find_files<CR>"),
+    dashboard.button("g", "󰦨  Find text", ":Telescope live_grep<CR>"),
+    dashboard.button("p", "  Find Project", ":Telescope whaler<CR>"),
+    dashboard.button("h", "  Show keybindings", ":WhichKey<CR>"),
+    dashboard.button("s", "  Configure NVIM", ":cd ~/.config/nvim | :edit lua/custom.lua<CR><CR>"),
   }
   if vim.fn.isdirectory("~/.config/hypr") then
-    local hypr_button = dashboard.button("d", "󰍹  Configure Hyprland", ":cd ~/.config/hypr | :edit ~/.config/hypr/UserConfigs/UserKeybinds.conf<CR><CR>")
+    local hypr_button = dashboard.button("d", "󰍹  Configure Hyprland",
+      ":cd ~/.config/hypr | :edit ~/.config/hypr/UserConfigs/UserKeybinds.conf<CR><CR>")
     table.insert(dashboard.section.buttons.val, hypr_button)
   end
-  local quit_button = dashboard.button( "q", "  Quit NVIM" , ":qa<CR>")
+  local quit_button = dashboard.button("q", "  Quit NVIM", ":qa<CR>")
   table.insert(dashboard.section.buttons.val, quit_button)
   local handle = io.popen('fortune')
   local fortune = handle:read("*a")
   handle:close()
   dashboard.section.footer.val = fortune
   dashboard.config.opts.noautocmd = true
-  vim.cmd[[autocmd User AlphaReady echo 'ready']]
+  vim.cmd [[autocmd User AlphaReady echo 'ready']]
   alpha.setup(dashboard.config)
 
   -- reconfigure telescope
@@ -188,6 +208,7 @@ M.configs = function()
         file_explorer = "nvimtree",
         directories = { "~/src", "~/dev" },
         oneoff_directories = { "~/.config/nvim", "~/.config/hypr" },
+        auto_file_explorer = false
       }
     }
   }
@@ -207,8 +228,6 @@ M.configs = function()
   }
 
   -- configure special lsp garbage
-
-
 end
 
 M.formatting_servers = {
@@ -222,11 +241,10 @@ M.formatting_servers = {
     }
   },
   omnisharp = {
-    root_dir = function ()
+    root_dir = function()
       return vim.loop.cwd()
     end,
-  }
+  },
+
 }
 return M
-
-
