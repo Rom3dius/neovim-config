@@ -197,6 +197,25 @@ M.configs = function()
   local telescope_actions = require('telescope.actions')
   telescope.setup {
     defaults = {
+      find_command = {
+        "fd",
+        "--type", "f",
+        "--hidden",          -- include hidden files (e.g., .github/*)
+        "--strip-cwd-prefix" -- cleaner paths
+        -- no --no-ignore here → so it still respects .gitignore
+      },
+      vimgrep_arguments = {
+        "rg",
+        "--color=never",
+        "--no-heading",
+        "--with-filename",
+        "--line-number",
+        "--column",
+        "--smart-case",
+        "--hidden",         -- include hidden files
+        "--glob", "!.git/*" -- optional: avoid noise from .git internals
+        -- no --no-ignore here → respects .gitignore
+      },
       mappings = {
         n = {
           ['<C-d>'] = telescope_actions.close
