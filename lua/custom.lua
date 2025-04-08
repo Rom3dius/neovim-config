@@ -116,6 +116,9 @@ M.configs = function()
   -- pull up alpha
   map('n', '<leader>d', ':Alpha<CR><CR>', { silent = true, desc = "Opens the Alpha dashboard" })
 
+  -- copy path of current buffer
+  map('n', '<leader>p', ':let @+ = expand("%:p")')
+
   -- enable Nightfox
   vim.cmd("colorscheme nightfox")
 
