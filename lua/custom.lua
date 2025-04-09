@@ -15,27 +15,21 @@ M.plugins = {
   { 'EdenEast/nightfox.nvim' },
   { "pocco81/auto-save.nvim" },
   { "SalOrak/whaler.nvim" },
-  { 'akinsho/toggleterm.nvim', version = "*", config = true },
   {
-    "yetone/avante.nvim",
-    event = "VeryLazy",
-    version = false,
+    'serenevoid/kiwi.nvim',
     opts = {
-      provider = "ollama",
-      ollama = {
-        model = "mistral-nemo:latest",
-        max_tokens = 128000
+      {
+        name = "work",
+        path = ".config/nvim/work-wiki"
+      },
+      {
+        name = "personal",
+        path = ".config/nvim/personal-wiki"
       }
     },
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "stevearc/dressing.nvim",
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      "nvim-telescope/telescope.nvim",
-      "hrsh7th/nvim-cmp"
-    }
+    lazy = true
   },
+  { 'akinsho/toggleterm.nvim', version = "*", config = true },
   {
     "MeanderingProgrammer/render-markdown.nvim",
     opts = {
@@ -46,6 +40,47 @@ M.plugins = {
       "nvim-treesitter/nvim-treesitter",
       "nvim-tree/nvim-web-devicons"
     }
+  },
+  {
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    opts = {
+      bigfile = { enabled = false },
+      dashboard = { enabled = false },
+      explorer = { enabled = false },
+      indent = { enabled = false },
+      input = { enabled = true },
+      picker = { enabled = false },
+      notifier = { enabled = false },
+      quickfile = { enabled = false },
+      scope = { enabled = false },
+      scroll = { enabled = false },
+      statuscolumn = { enabled = false },
+      words = { enabled = false },
+    },
+  },
+  {
+    "GeorgesAlkhouri/nvim-aider",
+    cmd = "Aider",
+    -- Example key mappings for common actions:
+    keys = {
+      { "<leader>a/", "<cmd>Aider toggle<cr>",       desc = "Toggle Aider" },
+      { "<leader>as", "<cmd>Aider send<cr>",         desc = "Send to Aider",                  mode = { "n", "v" } },
+      { "<leader>ac", "<cmd>Aider command<cr>",      desc = "Aider Commands" },
+      { "<leader>ab", "<cmd>Aider buffer<cr>",       desc = "Send Buffer" },
+      { "<leader>a+", "<cmd>Aider add<cr>",          desc = "Add File" },
+      { "<leader>a-", "<cmd>Aider drop<cr>",         desc = "Drop File" },
+      { "<leader>ar", "<cmd>Aider add readonly<cr>", desc = "Add Read-Only" },
+      -- Example nvim-tree.lua integration if needed
+      { "<leader>a+", "<cmd>AiderTreeAddFile<cr>",   desc = "Add File from Tree to Aider",    ft = "NvimTree" },
+      { "<leader>a-", "<cmd>AiderTreeDropFile<cr>",  desc = "Drop File from Tree from Aider", ft = "NvimTree" },
+    },
+    dependencies = {
+      "folke/snacks.nvim",
+      "nvim-tree/nvim-tree.lua",
+    },
+    config = true,
   }
 }
 
@@ -110,6 +145,12 @@ M.configs = function()
     { desc = "LSP Open diagnostics float ", noremap = true, silent = true })
   map('n', '<leader>ga', vim.diagnostic.setqflist, { desc = "LSP Show all errors in codebase" })
 
+  -- kiwi shortcuts
+  map('n', "<leader>wi", ":lua require(\"kiwi\").open_wiki_index()<CR>", { desc = "Open wiki index" })
+  map('n', '<leader>wp', ":lua require(\"kiwi\").open_wiki_index(\"personal\")<CR>", { desc = "Open personal wiki" })
+  map('n', '<leader>ww', ":lua require(\"kiwi\").open_wiki_index(\"work\")<CR>", { desc = "Open personal wiki" })
+  map('n', 'T', ":lua require('kiwi').todo.toggle()<cr>", { desc = "Toggle markdown task" })
+
   -- pull up which-key
   map('n', '<leader>h', ':WhichKey<CR>', { desc = "Open WhichKey to see keybindings" })
 
@@ -117,7 +158,7 @@ M.configs = function()
   map('n', '<leader>d', ':Alpha<CR><CR>', { silent = true, desc = "Opens the Alpha dashboard" })
 
   -- copy path of current buffer
-  map('n', '<leader>p', ':let @+ = expand("%:p")')
+  map('n', '<leader>p', ':let @+ = expand("%:p")<CR>', { silent = true, desc = "Copy files path to clipboard" })
 
   -- enable Nightfox
   vim.cmd("colorscheme nightfox")
@@ -249,7 +290,35 @@ M.configs = function()
     }
   }
 
-  -- configure special lsp garbage
+  -- configure aider
+  require("nvim_aider").setup({
+    -- Command that executes Aider
+    aider_cmd = "aider",
+    -- Command line arguments passed to aider
+    args = {
+      "--model ollama_chat/qwen2.5-coder:32b",
+      "--model-metadata-file ~/.config/nvim/aider/aider-ai-config.json",
+      "--set-env OLLAMA_API_BASE=http://127.0.0.1:11434",
+      "--no-auto-commits",
+      "--subtree-only",
+      "--pretty",
+      "--stream",
+    },
+    -- snacks.picker.layout.Config configuration
+    picker_cfg = {
+      preset = "vscode",
+    },
+    -- Other snacks.terminal.Opts options
+    config = {
+      os = { editPreset = "nvim-remote" },
+      gui = { nerdFontsVersion = "3" },
+    },
+    win = {
+      wo = { winbar = "Aider" },
+      style = "nvim_aider",
+      position = "right",
+    },
+  })
 end
 
 M.formatting_servers = {
